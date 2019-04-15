@@ -1,0 +1,19 @@
+#!/bin/bash
+
+rm -rf ~/.zshrc \
+       ~/.gitconfig \
+       ~/.ssh/config \
+       ~/.gitignore_global \
+       ~/.gitcommit_template
+
+ln -s ~/dotfiles/zsh/zshrc ~/.zshrc
+ln -s ~/dotfiles/gitconfig ~/.gitconfig
+ln -s ~/dotfiles/gitignore_global ~/.gitignore_global
+
+mkdir -p ~/.ssh
+mkdir -p ~/code
+
+cat ~/dotfiles/sshconfig > ~/.ssh/config
+
+platform=$(uname | awk '{print tolower($0)}')
+[[ -f "setup_$platform" ]] && source "./setup_$platform"

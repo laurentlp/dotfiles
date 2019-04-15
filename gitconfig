@@ -1,0 +1,13 @@
+[core]
+	excludesfile = ~/.gitignore_global
+[push]
+	default = simple
+[user]
+	name = Laurent Leclerc Poulin
+	email = laurentleclercpoulin@gmail.com
+[color]
+	ui = true
+[commit]
+	verbose = true
+[github]
+	user = laurentlp

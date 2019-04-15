@@ -1,0 +1,13 @@
+# Dependencies
+node_modules
+
+# Editor config
+.vscode
+.idea
+
+# System files
+.DS_Store
+
+# Env file
+.env
+python-version
