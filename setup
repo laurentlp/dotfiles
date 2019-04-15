@@ -15,5 +15,12 @@ mkdir -p ~/code
 
 cat ~/dotfiles/sshconfig > ~/.ssh/config
 
+OH_MY_ZSH=~/dotfiles/oh-my-zsh
+git clone https://github.com/robbyrussell/oh-my-zsh.git $OH_MY_ZSH
+git clone https://github.com/bhilburn/powerlevel9k.git $OH_MY_ZSH/custom/themes/powerlevel9k
+git clone https://github.com/zsh-users/zsh-autosuggestions $OH_MY_ZSH/custom/plugins/zsh-autosuggestions
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $OH_MY_ZSH/custom/plugins/zsh-syntax-highlighting
+
+
 platform=$(uname | awk '{print tolower($0)}')
 [[ -f "setup_$platform" ]] && source "./setup_$platform"

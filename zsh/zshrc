@@ -27,7 +27,7 @@ eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 
 # Path to your oh-my-zsh installation.
-export ZSH=$HOME/.oh-my-zsh
+export ZSH=$HOME/dotfiles/oh-my-zsh
 
 # Allows oh-my-zsh to auto update itself without prompt
 DISABLE_UPDATE_PROMPT=true
@@ -52,13 +52,11 @@ POWERLEVEL9K_MODE='awesome-fontconfig'
 plugins=(
   git
   zsh-autosuggestions
+  zsh-syntax-highlighting
 )
 
 # Enable oh-my-zsh
 source $ZSH/oh-my-zsh.sh
-
-# Add custom syntax highlighting for zsh
-source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 if [[ "$ZPROF" = true ]]; then
   zprof

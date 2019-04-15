@@ -7,8 +7,4 @@ sudo apt-get install zsh \
                      build-essential \
                      ripgrep
 
-git clone https://github.com/robbyrussell/oh-my-zsh.git ~/dotfiles/oh-my-zsh
-git clone https://github.com/bhilburn/powerlevel9k.git ~/dotfiles/oh-my-zsh/custom/themes/powerlevel9k
-
-
 [[ ! $SHELL =~ "zsh" ]] && chsh -s `which zsh`
