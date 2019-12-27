@@ -25,3 +25,5 @@ else
 fi
 
 alias grep='grep --color=auto'
+
+alias vi='nvim'

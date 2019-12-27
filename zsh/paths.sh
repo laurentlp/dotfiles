@@ -1,5 +1,5 @@
 # Setup PATH
-PATH=$HOME/bin:$PATH 
+PATH=$HOME/bin:$HOME/.local/bin:$PATH 
 PATH=$HOME/dotfiles/bin:$PATH
 PATH=/usr/local/bin:/usr/local/sbin:$PATH
 export PATH
@@ -10,6 +10,3 @@ if [ $+commands[go] ]; then
     export GOBIN=$GOPATH/bin
     export PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
 fi
-
-# Setup JDK
-export JAVA_HOME=`/usr/libexec/java_home`

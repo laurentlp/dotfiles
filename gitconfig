@@ -1,9 +1,10 @@
 [core]
 	excludesfile = ~/.gitignore_global
+	autocrlf = input
 [push]
 	default = simple
 [user]
-	name = Laurent Leclerc Poulin
+	name = Laurent Leclerc-Poulin
 	email = laurentleclercpoulin@gmail.com
 [color]
 	ui = true
