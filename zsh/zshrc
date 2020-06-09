@@ -28,7 +28,7 @@ DISABLE_UPDATE_PROMPT=true
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME="powerlevel9k/powerlevel9k"
+ZSH_THEME="powerlevel10k/powerlevel10k"
 
 # Custom theme configurations see below to find the corresponding theme
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(time context dir vcs)
@@ -55,4 +55,3 @@ source $ZSH/oh-my-zsh.sh
 if [[ "$ZPROF" = true ]]; then
   zprof
 fi
-source /usr/share/zsh-theme-powerlevel9k/powerlevel9k.zsh-theme
