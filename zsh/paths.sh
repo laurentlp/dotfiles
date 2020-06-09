@@ -12,3 +12,7 @@ if [ $+commands[go] ]; then
     export GOBIN=$GOPATH/bin
     export PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
 fi
+
+if [ $+commands[nvm] ]; then
+    export NVM_DIR="$HOME/.nvm"
+fi

@@ -14,6 +14,11 @@ brew install gnu-tar
 brew install coreutils
 brew install gnu-indent
 
+brew install docker
+
+brew cask install iterm2
+brew cask install google-chrome
+
 for f in ~/dotfiles/fonts/*; do source $f; done
 
 # Add powerlevel10k to the list of Oh My Zsh themes.

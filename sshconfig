@@ -12,8 +12,3 @@ Host tt
 HostName 192.168.2.175
 Port 65476
 User laurentlp
-
-Host tu
-HostName theuniverse.ca
-Port 65476
-User laurentlp

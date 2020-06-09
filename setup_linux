@@ -1,10 +1,11 @@
 #!/bin/bash
 
-sudo apt-get install zsh \
-                     nmap \
-                     git-flow \
-                     python-dev \
-                     build-essential \
-                     ripgrep
+sudo pacman -Syu zsh powerlevel10k
 
 [[ ! $SHELL =~ "zsh" ]] && chsh -s `which zsh`
+
+ln -s /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme ~/dotfiles/oh-my-zsh/themes/powerlevel10k.zsh-theme
+
+source ~/.zshrc
+
+p10k configure
