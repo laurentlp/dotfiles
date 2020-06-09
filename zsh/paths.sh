@@ -2,6 +2,8 @@
 PATH=$HOME/bin:$HOME/.local/bin:$PATH 
 PATH=$HOME/dotfiles/bin:$PATH
 PATH=/usr/local/bin:/usr/local/sbin:$PATH
+PATH=$HOME/.yarn/bin:$PATH
+PATH=$HOME/.cargo/bin:$PATH
 export PATH
 
 # Setup GOPATH
