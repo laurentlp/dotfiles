@@ -12,3 +12,5 @@
 	verbose = true
 [github]
 	user = laurentlp
+[bitbucket]
+	user = lalep17

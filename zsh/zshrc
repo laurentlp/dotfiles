@@ -2,11 +2,10 @@ if [[ "$ZPROF" = true ]]; then
   zmodload zsh/zprof
 fi
 
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
 export EDITOR='vi'
 export VISUAL='vi'
-
-GTK_MODULES=canberra-gtk-module
-GTK_PATH=:/usr/lib/gtk-2.0
 
 export ZSH="$HOME/dotfiles/oh-my-zsh"
 
@@ -54,4 +53,8 @@ source $ZSH/oh-my-zsh.sh
 
 if [[ "$ZPROF" = true ]]; then
   zprof
+fi
+
+if [ -f "/usr/share/nvm/init-nvm.sh" ]; then
+  source /usr/share/nvm/init-nvm.sh
 fi
