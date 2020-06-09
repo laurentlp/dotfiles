@@ -1,5 +1,10 @@
 #!/bin/bash
 
+git clone https://github.com/zsh-users/zsh-autosuggestions $OH_MY_ZSH/custom/plugins/zsh-autosuggestions
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $OH_MY_ZSH/custom/plugins/zsh-syntax-highlighting
+
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+
 brew install zsh
 [[ ! $SHELL =~ "zsh" ]] && chsh -s `which zsh`
 
@@ -15,9 +20,11 @@ brew install coreutils
 brew install gnu-indent
 
 brew install docker
+brew install jump
 
 brew cask install iterm2
 brew cask install google-chrome
+brew cask install visual-studio-code
 
 for f in ~/dotfiles/fonts/*; do source $f; done
 
