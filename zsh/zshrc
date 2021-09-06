@@ -45,6 +45,8 @@ plugins=(
   git
   zsh-autosuggestions
   zsh-syntax-highlighting
+  zsh-history-substring-search
+  zsh-completions
   sudo
 )
 
