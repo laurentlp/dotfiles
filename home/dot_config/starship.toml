@@ -47,9 +47,9 @@ min_time = 2000
 style = "bold yellow"
 format = "took [$duration]($style) "
 
-[status]
-style = "bold red"
-format = "[$status]($style) "
+# [status] (exit code) is deliberately not configured: verified inert in
+# starship 1.27 here - `starship prompt --status 1` with a literal format string
+# renders nothing. Failure is still visible through [character] error_symbol.
 
 [character]
 success_symbol = "[❯](bold green)"
