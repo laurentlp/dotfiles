@@ -1,13 +1,17 @@
-# Managed by chezmoi (source: ~/dotfiles/private_dot_ssh/private_config.tmpl).
-# Both identities are listed so the same file works on Linux (id_rsa) and macOS
-# (id_ed25519); ssh tries them in order.
+# Managed by chezmoi (source: ~/dotfiles/home/private_dot_ssh/private_config.tmpl).
+#
+# Identity is per OS: listing both globally makes ssh warn "no such identity"
+# on every connection from whichever machine lacks the other key.
 #
 # NOTE ON ORDERING: ssh_config is first-match-wins. Per-host values must appear
 # BEFORE the trailing `Host *` block that sets the defaults — a global directive
 # at the top of the file would silently override every host below it.
 
+{{- if eq .chezmoi.os "darwin" }}
 IdentityFile ~/.ssh/id_ed25519
+{{- else }}
 IdentityFile ~/.ssh/id_rsa
+{{- end }}
 
 Host github.com
   HostName github.com

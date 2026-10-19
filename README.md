@@ -97,7 +97,7 @@ home/                           ─── the chezmoi source ───
 Exactly three things, each with one home:
 
 1. **Packages and their install paths** → `darwin/` + `linux/` fragments and the install script.
-2. **`UseKeychain`** in ssh config, and the OS's own fragment directory → two `{{ if }}` blocks in the ignore/ssh templates.
+2. **`UseKeychain`, `IdentityFile`** in ssh config, and the OS's own fragment directory → a few `{{ if }}` blocks in the ignore/ssh templates.
 3. **Identity** → `.chezmoi.toml.tmpl`.
 
 Everything else is a plain shared file. Do not add templating unless the value
