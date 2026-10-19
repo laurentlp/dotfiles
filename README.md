@@ -5,15 +5,26 @@ Managed with [chezmoi](https://chezmoi.io). One configuration for macOS and Arch
 ## Bootstrap a new machine
 
 ```sh
-# package manager first: `pacman -S chezmoi` (Arch) or `brew install chezmoi` (macOS)
-git clone git@github.com:laurentlp/dotfiles.git ~/dotfiles
-chezmoi --source ~/dotfiles init    # generates ~/.config/chezmoi/chezmoi.toml (sourceDir = $HOME/dotfiles)
-chezmoi diff                        # review what would change
-chezmoi apply                       # write files into $HOME
+git clone git@github.com:laurentlp/dotfiles.git ~/dotfiles && ~/dotfiles/bootstrap.sh
 ```
 
-`chezmoi apply` also runs `run_onchange_install-packages.sh` — brew on macOS,
-pacman on Arch — the first time and whenever that script changes.
+`bootstrap.sh` installs chezmoi if it is missing, then runs `chezmoi init`
+(once, generating `~/.config/chezmoi/chezmoi.toml` with `sourceDir = $HOME/dotfiles`)
+and `chezmoi apply`. Re-running it is safe.
+
+Prerequisites: Homebrew on macOS (bootstrap stops with a message otherwise);
+on Arch nothing but `sudo`, which the package step prompts for.
+
+Packages are installed by `run_onchange_install-packages.sh` — on first apply and
+again whenever that file changes. Required (the shell config expects them):
+
+| | |
+| --- | --- |
+| both | chezmoi, starship, zsh-autosuggestions, zsh-syntax-highlighting, zsh-completions, jump, the_silver_searcher, pyenv, nvm, direnv, neovim, ripgrep, fzf |
+| Arch only | zsh (installs `github-cli`, not `gh`) |
+| optional | tmux, mosh, jq, tree, fd, bat, eza, GitHub CLI |
+
+macOS deliberately skips `zsh`: it is already the login shell there.
 
 ## Day to day
 
@@ -30,6 +41,7 @@ Never edit a managed file in place: the next `chezmoi apply` reverts it.
 ## Layout
 
 ```
+bootstrap.sh                           → fresh-machine entry point (not placed in $HOME)
 dot_zshrc                              → ~/.zshrc          (two-phase loader)
 dot_config/zsh/common/*.zsh            → shared fragments  (00-* run BEFORE compinit)
 dot_config/zsh/darwin/*.zsh            → macOS only        (brew paths, plugin sourcing)

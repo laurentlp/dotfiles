@@ -9,3 +9,6 @@ fonts/
 # Without this it maps to ~/oh-my-zsh and chezmoi chokes on a broken symlink
 # inside it (themes/powerlevel10k.zsh-theme).
 oh-my-zsh/
+
+# Bootstrap entry point; not a dotfile to place in $HOME.
+bootstrap.sh
