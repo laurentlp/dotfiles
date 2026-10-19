@@ -1,20 +1,3 @@
-# --- helpers from oh-my-zsh lib/git.zsh, required by the git plugin below ---
-function __git_prompt_git() {
-  GIT_OPTIONAL_LOCKS=0 command git "$@"
-}
-
-function git_current_branch() {
-  local ref
-  ref=$(__git_prompt_git symbolic-ref --quiet HEAD 2> /dev/null)
-  local ret=$?
-  if [[ $ret != 0 ]]; then
-    [[ $ret == 128 ]] && return
-    ref=$(__git_prompt_git rev-parse --short HEAD 2> /dev/null) || return
-  fi
-  echo ${ref#refs/heads/}
-}
-# --- end helpers ---
-
 # Git version checking
 autoload -Uz is-at-least
 git_version="${${(As: :)$(git version 2>/dev/null)}[3]}"
@@ -24,6 +7,31 @@ git_version="${${(As: :)$(git version 2>/dev/null)}[3]}"
 # (sorted alphabetically by function name)
 # (order should follow README)
 #
+
+# --- helpers from oh-my-zsh lib/git.zsh, required by git.plugin.zsh ---
+function __git_prompt_git() {
+  GIT_OPTIONAL_LOCKS=0 command git "$@"
+}
+
+function git_current_branch() {
+  local ref
+  ref=$(__git_prompt_git symbolic-ref --quiet HEAD 2> /dev/null)
+  local ret=$?
+  if [[ $ret != 0 ]]; then
+    [[ $ret == 128 ]] && return    # not a git repo
+    ref=$(__git_prompt_git rev-parse --short HEAD 2> /dev/null) || return
+  fi
+  echo ${ref#refs/heads/}
+}
+# --- end helpers ---
+
+# The name of the current branch
+# Back-compatibility wrapper for when this function was defined here in
+# the plugin, before being pulled in to core lib/git.zsh as git_current_branch()
+# to fix the core -> git plugin dependency.
+function current_branch() {
+  git_current_branch
+}
 
 # Check for develop and similarly named branches
 function git_develop_branch() {
@@ -40,40 +48,20 @@ function git_develop_branch() {
   return 1
 }
 
-# Get the default branch name from common branch names or fallback to remote HEAD
+# Check if main exists and use instead of master
 function git_main_branch() {
   command git rev-parse --git-dir &>/dev/null || return
-  
-  local remote ref
-  
+  local ref
   for ref in refs/{heads,remotes/{origin,upstream}}/{main,trunk,mainline,default,stable,master}; do
     if command git show-ref -q --verify $ref; then
       echo ${ref:t}
       return 0
     fi
   done
-  
-  # Fallback: try to get the default branch from remote HEAD symbolic refs
-  for remote in origin upstream; do
-    ref=$(command git rev-parse --abbrev-ref $remote/HEAD 2>/dev/null)
-    if [[ $ref == $remote/* ]]; then
-      echo ${ref#"$remote/"}; return 0
-    fi
-  done
 
   # If no main branch was found, fall back to master but return error
   echo master
   return 1
-}
-
-function gbcopy() {
-  command git rev-parse --git-dir &>/dev/null || return
-
-  local branch
-  branch="$(git_current_branch)" || return
-  [[ -n "$branch" ]] || return 1
-
-  print -rn -- "$branch" | clipcopy
 }
 
 function grename() {
@@ -115,13 +103,13 @@ function work_in_progress() {
 # Aliases
 # (sorted alphabetically by command)
 # (order should follow README)
-# (in some cases force the alias order to match README, like for example gke and gk)
+# (in some cases force the alisas order to match README, like for example gke and gk)
 #
 
 alias grt='cd "$(git rev-parse --show-toplevel || echo .)"'
 
 function ggpnp() {
-  if [[ $# == 0 ]]; then
+  if [[ "$#" == 0 ]]; then
     ggl && ggp
   else
     ggl "${*}" && ggp "${*}"
@@ -164,9 +152,8 @@ function gbda() {
 # Copied and modified from James Roeder (jmaroeder) under MIT License
 # https://github.com/jmaroeder/plugin-git/blob/216723ef4f9e8dde399661c39c80bdf73f4076c4/functions/gbda.fish
 function gbds() {
-  local default_branch
-  default_branch=$(git_main_branch) \
-    || default_branch=$(git_develop_branch)
+  local default_branch=$(git_main_branch)
+  (( ! $? )) || default_branch=$(git_develop_branch)
 
   git for-each-ref refs/heads/ "--format=%(refname:short)" | \
     while read branch; do
@@ -181,7 +168,7 @@ alias gbgd='LANG=C git branch --no-color -vv | grep ": gone\]" | cut -c 3- | awk
 alias gbgD='LANG=C git branch --no-color -vv | grep ": gone\]" | cut -c 3- | awk '"'"'{print $1}'"'"' | xargs git branch -D'
 alias gbm='git branch --move'
 alias gbnm='git branch --no-merged'
-alias gbr='git branch --remotes'
+alias gbr='git branch --remote'
 alias ggsup='git branch --set-upstream-to=origin/$(git_current_branch)'
 alias gbg='LANG=C git branch -vv | grep ": gone\]"'
 alias gco='git checkout'
@@ -230,7 +217,6 @@ alias gc!='git commit --verbose --amend'
 alias gcn='git commit --verbose --no-edit'
 alias gcn!='git commit --verbose --no-edit --amend'
 alias gcf='git config --list'
-alias gcfu='git commit --fixup'
 alias gdct='git describe --tags $(git rev-list --tags --max-count=1)'
 alias gd='git diff'
 alias gdca='git diff --cached'
@@ -266,11 +252,9 @@ alias glod='git log --graph --pretty="%Cred%h%Creset -%C(auto)%d%Creset %s %Cgre
 alias glola='git log --graph --pretty="%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset" --all'
 alias glols='git log --graph --pretty="%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset" --stat'
 alias glol='git log --graph --pretty="%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset"'
-alias glolm='git log $(git_main_branch) --graph --pretty="%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset"'
 alias glo='git log --oneline --decorate'
 alias glog='git log --oneline --decorate --graph'
 alias gloga='git log --oneline --decorate --graph --all'
-alias glom='git log --oneline --decorate --color $(git_main_branch)..'
 
 # Pretty log messages
 function _git_log_prettily(){
@@ -302,11 +286,10 @@ alias gpra='git pull --rebase --autostash'
 alias gprav='git pull --rebase --autostash -v'
 
 function ggu() {
-  local b
-  [[ $# != 1 ]] && b="$(git_current_branch)"
-  git pull --rebase origin "${b:-$1}"
+  [[ "$#" != 1 ]] && local b="$(git_current_branch)"
+  git pull --rebase origin "${b:=$1}"
 }
-compdef _git ggu=git-pull
+compdef _git ggu=git-checkout
 
 alias gprom='git pull --rebase origin $(git_main_branch)'
 alias gpromi='git pull --rebase=interactive origin $(git_main_branch)'
@@ -315,15 +298,14 @@ alias gprumi='git pull --rebase=interactive upstream $(git_main_branch)'
 alias ggpull='git pull origin "$(git_current_branch)"'
 
 function ggl() {
-  if [[ $# != 0 ]] && [[ $# != 1 ]]; then
+  if [[ "$#" != 0 ]] && [[ "$#" != 1 ]]; then
     git pull origin "${*}"
   else
-    local b
-    [[ $# == 0 ]] && b="$(git_current_branch)"
-    git pull origin "${b:-$1}"
+    [[ "$#" == 0 ]] && local b="$(git_current_branch)"
+    git pull origin "${b:=$1}"
   fi
 }
-compdef _git ggl=git-pull
+compdef _git ggl=git-checkout
 
 alias gluc='git pull upstream $(git_current_branch)'
 alias glum='git pull upstream $(git_main_branch)'
@@ -331,11 +313,10 @@ alias gp='git push'
 alias gpd='git push --dry-run'
 
 function ggf() {
-  local b
-  [[ $# != 1 ]] && b="$(git_current_branch)"
-  git push --force origin "${b:-$1}"
+  [[ "$#" != 1 ]] && local b="$(git_current_branch)"
+  git push --force origin "${b:=$1}"
 }
-compdef _git ggf=git-push
+compdef _git ggf=git-checkout
 
 alias gpf!='git push --force'
 is-at-least 2.30 "$git_version" \
@@ -343,11 +324,10 @@ is-at-least 2.30 "$git_version" \
   || alias gpf='git push --force-with-lease'
 
 function ggfl() {
-  local b
-  [[ $# != 1 ]] && b="$(git_current_branch)"
-  git push --force-with-lease origin "${b:-$1}"
+  [[ "$#" != 1 ]] && local b="$(git_current_branch)"
+  git push --force-with-lease origin "${b:=$1}"
 }
-compdef _git ggfl=git-push
+compdef _git ggfl=git-checkout
 
 alias gpsup='git push --set-upstream origin $(git_current_branch)'
 is-at-least 2.30 "$git_version" \
@@ -359,15 +339,14 @@ alias gpod='git push origin --delete'
 alias ggpush='git push origin "$(git_current_branch)"'
 
 function ggp() {
-  if [[ $# != 0 ]] && [[ $# != 1 ]]; then
+  if [[ "$#" != 0 ]] && [[ "$#" != 1 ]]; then
     git push origin "${*}"
   else
-    local b
-    [[ $# == 0 ]] && b="$(git_current_branch)"
-    git push origin "${b:-$1}"
+    [[ "$#" == 0 ]] && local b="$(git_current_branch)"
+    git push origin "${b:=$1}"
   fi
 }
-compdef _git ggp=git-push
+compdef _git ggp=git-checkout
 
 alias gpu='git push upstream'
 alias grb='git rebase'
@@ -380,8 +359,6 @@ alias grbd='git rebase $(git_develop_branch)'
 alias grbm='git rebase $(git_main_branch)'
 alias grbom='git rebase origin/$(git_main_branch)'
 alias grbum='git rebase upstream/$(git_main_branch)'
-alias grbmi='git rebase $(git_main_branch) --interactive'
-alias grbmia='git rebase $(git_main_branch) --interactive --autosquash'
 alias grf='git reflog'
 alias gr='git remote'
 alias grv='git remote --verbose'
@@ -424,10 +401,8 @@ alias gsts='git stash show --patch'
 alias gst='git status'
 alias gss='git status --short'
 alias gsb='git status --short --branch'
-alias gsnut='git status --untracked-files=no'
 alias gsi='git submodule init'
 alias gsu='git submodule update'
-alias gsuri='git submodule update --recursive --init'
 alias gsd='git svn dcommit'
 alias git-svn-dcommit-push='git svn dcommit && git push github $(git_main_branch):svntrunk'
 alias gsr='git svn rebase'
@@ -440,7 +415,7 @@ alias gts='git tag --sign'
 alias gtv='git tag | sort -V'
 alias gignore='git update-index --assume-unchanged'
 alias gunignore='git update-index --no-assume-unchanged'
-alias gwch='git log --patch --abbrev-commit --pretty=medium --raw'
+alias gwch='git whatchanged -p --abbrev-commit --pretty=medium'
 alias gwt='git worktree'
 alias gwta='git worktree add'
 alias gwtls='git worktree list'
@@ -453,13 +428,19 @@ alias gke='\gitk --all $(git log --walk-reflogs --pretty=%h) &!'
 
 unset git_version
 
-# Logic for adding warnings on deprecated aliases or functions
-local old_name new_name
-for old_name new_name (
-  current_branch  git_current_branch
+# Logic for adding warnings on deprecated aliases
+local old_alias new_alias
+for old_alias new_alias (
+  # TODO(2023-10-19): remove deprecated `git pull --rebase` aliases
+  gup     gpr
+  gupv    gprv
+  gupa    gpra
+  gupav   gprav
+  gupom   gprom
+  gupomi  gpromi
 ); do
-  aliases[$old_name]="
-    print -Pu2 \"%F{yellow}[oh-my-zsh] '%F{red}${old_name}%F{yellow}' is deprecated, using '%F{green}${new_name}%F{yellow}' instead.%f\"
-    $new_name"
+  aliases[$old_alias]="
+    print -Pu2 \"%F{yellow}[oh-my-zsh] '%F{red}${old_alias}%F{yellow}' is a deprecated alias, using '%F{green}${new_alias}%F{yellow}' instead.%f\"
+    $new_alias"
 done
-unset old_name new_name
+unset old_alias new_alias
