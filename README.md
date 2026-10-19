@@ -121,6 +121,12 @@ genuinely differs per machine.
 - **Hand-editing a managed file** makes chezmoi ask *"has changed since chezmoi
   last wrote it?"*; in a non-interactive context that aborts the apply.
 
+- **Modified keys need the transport's cooperation.** `Shift+Enter` (and any
+  modified key) depends on the terminal's Kitty keyboard protocol. `mosh` has no
+  equivalent of tmux's `extended-keys`, so the handshake dies inside mosh-server
+  and `Shift+Enter` arrives as a bare `CR` — a TUI like pi submits instead of
+  inserting a newline. Use `ssh` for interactive work, mosh for long jobs.
+
 ## History
 
 `pre-chezmoi` tags the older model: `./setup` symlinks, a vendored (gitignored)
