@@ -24,6 +24,12 @@ else
   alias http-serve='python -m SimpleHTTPServer'
 fi
 
+# Listing: identical on every machine — these flags exist in both GNU and BSD ls.
+# `ll` is the day-to-day one; `la` adds dotfiles (without the . and .. noise).
+alias l='ls -CF'
+alias ll='ls -lh'
+alias la='ls -lAh'
+
 alias grep='grep --color=auto'
 
 alias vi='nvim'
