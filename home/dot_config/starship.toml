@@ -1,0 +1,56 @@
+# Starship prompt — managed by chezmoi (source: ~/dotfiles/home/dot_config/starship.toml).
+#
+# Design rules, learned the hard way:
+#  * NO Nerd Font glyphs. This terminal renders `❯` and emoji but not the private-use
+#    branch symbol \ue0a0, so anything icon-ish would be a blank gap. Plain Unicode
+#    arrows (⇡ ⇣) and ASCII status marks are used instead.
+#  * ANSI palette names, never hex, so the prompt follows the Base16 palette pushed
+#    by 70-colours.sh instead of fighting it.
+#  * `user@host` is shown always: it is how you tell bear from the Mac, and it comes
+#    from $USER and the hostname, so a new machine needs no edit here.
+#  * no language-version modules ($nodejs, $python, ...): they stat files on every
+#    prompt and get slow in large repos. Add them back only if you want them.
+
+format = """
+$username$hostname$directory$git_branch$git_status$cmd_duration$status
+$character"""
+
+[username]
+show_always = true
+style_user = "bold blue"
+style_root = "bold red"
+format = "[$user]($style)"
+
+[hostname]
+ssh_only = false            # always: the machine name is the point
+trim_at = "."               # MacBook-Pro.local -> MacBook-Pro
+style = "bold green"
+# @host rather than the default "in 🌐 host in " — no globe in every local session
+format = "[@$hostname]($style) "
+
+[directory]
+style = "bold cyan"
+truncation_length = 3
+truncate_to_repo = true
+format = "[$path]($style) "
+
+[git_branch]
+style = "bold magenta"
+format = "on [$branch]($style) "
+
+[git_status]
+style = "bold red"
+format = "([$all_status$ahead_behind]($style) )"
+
+[cmd_duration]
+min_time = 2000
+style = "bold yellow"
+format = "took [$duration]($style) "
+
+[status]
+style = "bold red"
+format = "[$status]($style) "
+
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
