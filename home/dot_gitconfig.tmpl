@@ -16,9 +16,26 @@
 	user = lalep17
 [safe]
 	directory = /etc
+
+{{- if eq .chezmoi.os "darwin" }}
+# macOS keeps HTTPS credentials in the login keychain. Without this, any HTTPS
+# remote falls back to prompting for a username and password.
+[credential]
+	helper = osxkeychain
+{{- end }}
+
+# github.com/gist: gh's helper first (when gh is authenticated), keychain as the
+# fallback. The leading empty `helper` resets any inherited helper list, which is
+# why osxkeychain has to be re-added inside these blocks on macOS.
 [credential "https://github.com"]
 	helper =
 	helper = !gh auth git-credential
+{{- if eq .chezmoi.os "darwin" }}
+	helper = osxkeychain
+{{- end }}
 [credential "https://gist.github.com"]
 	helper =
 	helper = !gh auth git-credential
+{{- if eq .chezmoi.os "darwin" }}
+	helper = osxkeychain
+{{- end }}
