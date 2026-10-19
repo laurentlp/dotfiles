@@ -1,11 +1,13 @@
 # Managed by chezmoi (source: ~/dotfiles/private_dot_ssh/private_config.tmpl).
 # Both identities are listed so the same file works on Linux (id_rsa) and macOS
 # (id_ed25519); ssh tries them in order.
+#
+# NOTE ON ORDERING: ssh_config is first-match-wins. Per-host values must appear
+# BEFORE the trailing `Host *` block that sets the defaults — a global directive
+# at the top of the file would silently override every host below it.
 
 IdentityFile ~/.ssh/id_ed25519
 IdentityFile ~/.ssh/id_rsa
-ServerAliveInterval 60
-ServerAliveCountMax 3
 
 Host github.com
   HostName github.com
@@ -35,4 +37,9 @@ Host pi.theuniverse.ca
   HostName 192.168.10.190
   User laurentlp
   ServerAliveInterval 15
+  ServerAliveCountMax 3
+
+# Defaults for everything else. Must stay LAST so the hosts above win.
+Host *
+  ServerAliveInterval 60
   ServerAliveCountMax 3
