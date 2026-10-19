@@ -18,19 +18,36 @@ brew install tmux mosh jq tree fd bat eza gh \
 
 {{ else if eq .chezmoi.os "linux" -}}
 command -v pacman >/dev/null 2>&1 || {
-  echo "Only Arch (pacman) is automated. Install by hand: zsh chezmoi starship zsh-autosuggestions zsh-syntax-highlighting zsh-completions jump the_silver_searcher pyenv nvm direnv neovim ripgrep fzf" >&2
+  echo "Only Arch (pacman) is automated. Install by hand: zsh chezmoi starship zsh-autosuggestions zsh-syntax-highlighting zsh-completions the_silver_searcher pyenv nvm direnv neovim ripgrep fzf (+ jump from the AUR)" >&2
   exit 0
 }
 if [ "$(id -u)" -ne 0 ]; then
   # No self-elevation: chezmoi may run this from a temp path, so $0 is unreliable.
   echo "Package install needs root. Run:" >&2
-  echo "  sudo pacman -S --needed --noconfirm zsh chezmoi starship zsh-autosuggestions zsh-syntax-highlighting zsh-completions jump the_silver_searcher pyenv nvm direnv neovim ripgrep fzf" >&2
+  echo "  sudo pacman -S --needed --noconfirm zsh chezmoi starship zsh-autosuggestions zsh-syntax-highlighting zsh-completions the_silver_searcher pyenv nvm direnv neovim ripgrep fzf" >&2
   exit 0
 fi
+
+# NOTE: every name here must exist in [core]/[extra]. One unknown name aborts
+# the entire transaction, so AUR-only packages belong further down.
 pacman -S --needed --noconfirm zsh chezmoi starship zsh-autosuggestions \
-       zsh-syntax-highlighting zsh-completions jump the_silver_searcher \
+       zsh-syntax-highlighting zsh-completions the_silver_searcher \
        pyenv nvm direnv neovim ripgrep fzf
-# note: the GitHub CLI is packaged as `github-cli`, not `gh`, on Arch
+# the GitHub CLI is packaged as `github-cli`, not `gh`, on Arch
 pacman -S --needed --noconfirm tmux mosh jq tree fd bat eza github-cli \
   || echo "some optional packages unavailable — continuing" >&2
+
+# jump is AUR-only on Arch. 75-integrations.zsh guards on the binary, so the
+# shell simply works without it; install via an AUR helper when possible.
+if ! command -v jump >/dev/null 2>&1; then
+  for helper in yay paru; do
+    if command -v "$helper" >/dev/null 2>&1; then
+      "$helper" -S --needed --noconfirm jump \
+        || echo "  jump install failed — zsh works without it" >&2
+      break
+    fi
+  done
+  command -v jump >/dev/null 2>&1 \
+    || echo "hint: 'jump' is AUR-only on Arch (yay -S jump) — optional" >&2
+fi
 {{ end -}}

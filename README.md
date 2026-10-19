@@ -27,6 +27,24 @@ result: zsh installed, `~/.zshrc` parses, every fragment parses, the other OS's
 fragments are absent, `~/.ssh/config` is 0600, and `chezmoi status` is empty.
 This is the only honest way to check the "one command on a fresh machine" claim.
 
+## Packages
+
+Installed by `run_onchange_before_install-packages.sh`, which re-runs whenever
+that file changes:
+
+| Scope | Packages |
+| --- | --- |
+| both | chezmoi, starship, zsh-autosuggestions, zsh-syntax-highlighting, zsh-completions, the_silver_searcher, pyenv, nvm, direnv, neovim, ripgrep, fzf |
+| macOS only | jump (Homebrew) |
+| Arch only | zsh |
+| optional | tmux, mosh, jq, tree, fd, bat, eza, GitHub CLI |
+
+`jump` is **AUR-only on Arch** — not in `[core]/[extra]`. Because one unknown
+name aborts the whole `pacman -S` transaction, it is installed separately: via
+`yay`/`paru` when present, otherwise skipped with a hint. `75-integrations.zsh`
+guards on the binary, so the shell works fine without it. The GitHub CLI is
+packaged as `github-cli` on Arch, not `gh`.
+
 ## Day to day
 
 | Task | Command |

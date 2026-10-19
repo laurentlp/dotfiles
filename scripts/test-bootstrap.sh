@@ -4,9 +4,9 @@
 #   scripts/test-bootstrap.sh
 #
 # This is the only way to verify the "one command on a fresh machine" claim
-# without a spare box: a real archlinux image, no shell config, no chezmoi.
-# It mounts the repo read-only, copies it to /root, runs bootstrap.sh, and
-# asserts the result is sane.
+# without a spare box: a real archlinux image with no shell config and no
+# chezmoi. It mounts the repo read-only, copies it to /root, runs bootstrap.sh,
+# and asserts the result.
 set -eu
 
 repo=$(cd "$(dirname "$0")/.." && pwd)
@@ -17,7 +17,7 @@ command -v docker >/dev/null 2>&1 || {
   exit 1
 }
 
-echo "==> building a clean $image with the repo at /root/dotfiles" >&2
+echo "==> running in $image (repo mounted at /src)" >&2
 
 docker run --rm -v "$repo:/src:ro" "$image" bash -eu -c '
   # fresh Arch images ship a stale keyring; refresh it before anything else
@@ -32,21 +32,35 @@ docker run --rm -v "$repo:/src:ro" "$image" bash -eu -c '
 
   echo
   echo "==> assertions"
+
   fail=0
-  check() { if eval "$2"; then printf "  ok    %s\n" "$1"; else printf "  FAIL  %s\n" "$1"; fail=1; fi; }
-  check "zsh installed"              "command -v zsh >/dev/null"
-  check "starship installed"         "command -v starship >/dev/null"
-  check "~/.zshrc is a real file"    "test -f /root/.zshrc && test ! -L /root/.zshrc"
-  check "~/.zshrc parses"            "zsh -n /root/.zshrc"
-  check "every fragment parses"      "for f in /root/.config/zsh/common/*.zsh; do zsh -n \"$f\" || exit 1; done"
-  check "linux fragments present"    "test -f /root/.config/zsh/linux/00-paths.zsh"
-  check "darwin fragments absent"    "test ! -e /root/.config/zsh/darwin"
-  check "ssh config mode 0600"       "[ \"$(stat -c %a /root/.ssh/config)\" = 600 ]"
-  check "gitconfig rendered"         "grep -q \"$(printf \"\t\")\" /root/.gitconfig 2>/dev/null; test -s /root/.gitconfig"
-  check "chezmoi reports clean"      "[ -z \"$(chezmoi status)\" ]"
-  check "shell starts without error" "zsh -i -c exit 2>/dev/null"
+  # Note: the command is a *string* evaluated later, so single-quote it.
+  # Double quotes would expand $f etc. in this shell under set -u.
+  check() {
+    if eval "$2" >/dev/null 2>&1; then
+      printf "  ok    %s\n" "$1"
+    else
+      printf "  FAIL  %s\n" "$1"
+      fail=1
+    fi
+  }
+
+  check "zsh installed"                "command -v zsh"
+  check "starship installed"           "command -v starship"
+  check "~/.zshrc is a regular file"   "test -f /root/.zshrc && test ! -L /root/.zshrc"
+  check "~/.zshrc parses"              "zsh -n /root/.zshrc"
+  check "every common fragment parses" "for f in /root/.config/zsh/common/*.zsh; do zsh -n \"\$f\" || exit 1; done"
+  check "linux fragments present"      "test -f /root/.config/zsh/linux/00-paths.zsh"
+  check "darwin fragments absent"      "test ! -e /root/.config/zsh/darwin"
+  check "ssh config is mode 0600"      "[ \"\$(stat -c %a /root/.ssh/config)\" = 600 ]"
+  check "gitconfig rendered"           "grep -q \"@\" /root/.gitconfig"
+  check "chezmoi status is empty"      "[ -z \"\$(chezmoi status)\" ]"
+  check "shell starts without output"  "zsh -i -c exit 2>/dev/null"
 
   echo
-  if [ "$fail" -ne 0 ]; then echo "SMOKE TEST FAILED" >&2; exit 1; fi
+  if [ "$fail" -ne 0 ]; then
+    echo "SMOKE TEST FAILED" >&2
+    exit 1
+  fi
   echo "SMOKE TEST PASSED"
 '
