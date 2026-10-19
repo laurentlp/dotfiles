@@ -1,0 +1,16 @@
+{{- /*
+Templated ignore: each machine only carries the fragments it can actually use.
+Hiding the other OS's directory keeps ~/.config/zsh honest — otherwise the Mac
+holds dead darwin/*.zsh files that nothing sources, and vice versa.
+
+The leftovers already written by earlier applies are cleaned up by
+.chezmoiremove.tmpl, because chezmoi does not delete targets it stops managing.
+*/ -}}
+
+{{ if ne .chezmoi.os "darwin" }}
+.config/zsh/darwin
+{{- end }}
+
+{{ if ne .chezmoi.os "linux" }}
+.config/zsh/linux
+{{- end }}

@@ -1,0 +1,19 @@
+{{- /*
+Targets chezmoi deletes on apply. Kept permanently: applying is idempotent
+(nothing to delete once gone) and the list documents what this repo used to own.
+
+chezmoi has no `apply --prune` (verified on 2.73.2), so without an entry here a
+renamed or removed *managed* file stays on disk forever — e.g. a renamed
+~/.config/zsh/common fragment would keep being sourced, silently loading stale
+config.
+
+IMPORTANT: an entry is ignored if the same path is also in .chezmoiignore — the
+ignore wins and nothing is removed (verified). The other OS's fragment directory
+is ignored by .chezmoiignore.tmpl, so it must be cleaned once by hand instead:
+    Linux:  rm -rf ~/.config/zsh/darwin
+    macOS:  rm -rf ~/.config/zsh/linux
+
+Example entry (one path per line):
+.config/zsh/common/99-something-renamed.zsh
+*/ -}}
+
