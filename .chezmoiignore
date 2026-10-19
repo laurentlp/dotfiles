@@ -4,3 +4,8 @@
 
 README.md
 fonts/
+
+# Legacy vendored oh-my-zsh (gitignored, 41 MB, unused since starship).
+# Without this it maps to ~/oh-my-zsh and chezmoi chokes on a broken symlink
+# inside it (themes/powerlevel10k.zsh-theme).
+oh-my-zsh/
