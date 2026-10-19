@@ -24,6 +24,11 @@ else
   alias http-serve='python -m SimpleHTTPServer'
 fi
 
+# Reload the shell after `chezmoi apply`. `source ~/.zshrc` is a no-op by design
+# (the loader guards against double-sourcing, which would run compinit and the
+# zsh plugins twice), so this execs a fresh interactive shell instead.
+alias reload='exec zsh'
+
 # Listing: identical on every machine — these flags exist in both GNU and BSD ls.
 # `ll` is the day-to-day one; `la` adds dotfiles (without the . and .. noise).
 alias l='ls -CF'

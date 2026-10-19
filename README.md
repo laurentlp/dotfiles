@@ -52,6 +52,7 @@ packaged as `github-cli` on Arch, not `gh`.
 | Edit a managed file | `chezmoi edit ~/.zshrc` |
 | See pending changes | `chezmoi diff` |
 | Apply | `chezmoi apply` |
+| Pick up applied changes in the current shell | `reload` (= `exec zsh`); `source ~/.zshrc` does nothing by design |
 | Pull the repo and apply | `chezmoi update` (also available as `updatedotfiles`) |
 | Adopt a file you edited in place | `chezmoi add ~/.config/foo` |
 | Check nothing is out of sync | `chezmoi status` (empty = clean) |
