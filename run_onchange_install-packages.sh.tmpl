@@ -1,0 +1,22 @@
+#!/bin/sh
+# chezmoi: runs on first apply and again whenever this file changes.
+# Idempotent — both package managers skip what is already installed.
+set -eu
+
+{{ if eq .chezmoi.os "darwin" -}}
+if ! command -v brew >/dev/null 2>&1; then
+  echo "Homebrew not found — install it from https://brew.sh, then: chezmoi apply" >&2
+  exit 1
+fi
+brew install starship chezmoi zsh-autosuggestions zsh-syntax-highlighting zsh-completions
+{{ else if eq .chezmoi.os "linux" -}}
+if ! command -v pacman >/dev/null 2>&1; then
+  echo "Not an Arch system — install manually: starship chezmoi zsh-autosuggestions zsh-syntax-highlighting zsh-completions" >&2
+  exit 0
+fi
+# re-exec under root only if needed
+if [ "$(id -u)" -ne 0 ]; then
+  exec sudo "$0" "$@"
+fi
+pacman -S --needed --noconfirm starship chezmoi zsh-autosuggestions zsh-syntax-highlighting zsh-completions
+{{ end -}}

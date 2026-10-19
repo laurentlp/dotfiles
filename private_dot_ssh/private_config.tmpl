@@ -1,0 +1,38 @@
+# Managed by chezmoi (source: ~/dotfiles/private_dot_ssh/private_config.tmpl).
+# Both identities are listed so the same file works on Linux (id_rsa) and macOS
+# (id_ed25519); ssh tries them in order.
+
+IdentityFile ~/.ssh/id_ed25519
+IdentityFile ~/.ssh/id_rsa
+ServerAliveInterval 60
+ServerAliveCountMax 3
+
+Host github.com
+  HostName github.com
+  User git
+  IdentitiesOnly yes
+  PreferredAuthentications publickey
+  AddKeysToAgent yes
+{{- if eq .chezmoi.os "darwin" }}
+  UseKeychain yes
+{{- end }}
+
+Host tt
+  HostName 192.168.1.190
+  Port 65476
+  User laurentlp
+  ServerAliveInterval 15
+  ServerAliveCountMax 3
+
+Host theuniverse.ca
+  HostName theuniverse.ca
+  Port 65476
+  User laurentlp
+  ServerAliveInterval 15
+  ServerAliveCountMax 3
+
+Host pi.theuniverse.ca
+  HostName 192.168.10.190
+  User laurentlp
+  ServerAliveInterval 15
+  ServerAliveCountMax 3

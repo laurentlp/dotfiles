@@ -1,0 +1,34 @@
+# ~/.zshrc — managed by chezmoi (source: ~/dotfiles/dot_zshrc)
+#
+#   chezmoi edit ~/.zshrc     edit the source and apply it
+#   chezmoi diff              see what would change
+#   chezmoi apply             apply
+#
+# Loading is two-phase: files numbered 00-* run BEFORE compinit (they set
+# environment and fpath), everything else runs after it. compinit must come
+# before 50-git-aliases.zsh, which calls compdef.
+
+(( ${+__ZSHRC_LOADED} )) && return
+typeset -g __ZSHRC_LOADED=1
+
+case $OSTYPE in
+  darwin*) zsh_osdir=darwin ;;
+  linux*)  zsh_osdir=linux  ;;
+  *)       zsh_osdir=none   ;;
+esac
+
+# --- phase 1: environment + fpath (must precede compinit) ---
+for f in ~/.config/zsh/common/00-*.zsh(N) ~/.config/zsh/$zsh_osdir/00-*.zsh(N); do
+  source $f
+done
+
+autoload -Uz compinit
+compinit -i                 # -i skips the insecure-directory check; drop it to enforce
+zmodload -i zsh/complist    # required for `menu select`, set in 40-zstyles.zsh
+
+# --- phase 2: everything else, common first then OS-specific, numeric order ---
+for f in ~/.config/zsh/common/[1-9]*.zsh(N) ~/.config/zsh/$zsh_osdir/[1-9]*.zsh(N); do
+  source $f
+done
+
+unset f zsh_osdir

@@ -1,0 +1,24 @@
+[core]
+	excludesfile = ~/.gitignore_global
+	autocrlf = input
+[push]
+	default = simple
+[user]
+	name = {{ .name }}
+	email = {{ .email }}
+[color]
+	ui = true
+[commit]
+	verbose = true
+[github]
+	user = laurentlp
+[bitbucket]
+	user = lalep17
+[safe]
+	directory = /etc
+[credential "https://github.com"]
+	helper =
+	helper = !gh auth git-credential
+[credential "https://gist.github.com"]
+	helper =
+	helper = !gh auth git-credential

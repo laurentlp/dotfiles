@@ -1,0 +1,6 @@
+# Files that live in the source repo but must NOT be mapped into $HOME.
+# Anything in a chezmoi source root maps to ~/<name> — README.md would become
+# ~/README.md, fonts/ would become ~/fonts/.
+
+README.md
+fonts/

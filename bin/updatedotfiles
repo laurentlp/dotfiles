@@ -1,6 +1,0 @@
-#!/bin/zsh
-
-cd ~/dotfiles
-git pull origin master
-
-[[ "$ZSH_NAME" = "zsh" ]] && echo "reloading ~/.zshrc" && source ~/.zshrc

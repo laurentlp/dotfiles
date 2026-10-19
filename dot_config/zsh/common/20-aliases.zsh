@@ -27,4 +27,3 @@ fi
 alias grep='grep --color=auto'
 
 alias vi='nvim'
-alias pacman='sudo pacman'

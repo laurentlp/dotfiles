@@ -1,0 +1,4 @@
+#!/bin/sh
+# Refresh chezmoi-managed config: pulls the source repo and applies changes.
+# (Replaces the old dotfiles/git-pull + reload helper.)
+exec chezmoi update
