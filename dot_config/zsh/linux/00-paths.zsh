@@ -13,8 +13,5 @@ if [ $+commands[go] ]; then
     export PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
 fi
 
-if [ $+commands[nvm] ]; then
-    export NVM_DIR="$HOME/.nvm"
-fi
 # zsh-completions ships its functions here (must precede compinit)
 [[ -d /usr/share/zsh/plugins/zsh-completions ]] && fpath=(/usr/share/zsh/plugins/zsh-completions $fpath)
